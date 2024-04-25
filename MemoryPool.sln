@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33529.622
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NginxMemory", "Nginx\Nginx.vcxproj", "{D9904A62-00CF-4A81-9294-C1E9222EC308}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SGISTL_Allocator", "SGISTL_Allocator\SGISTL_Allocator.vcxproj", "{803D653E-EDEE-464D-9997-BCA0F9CA6F52}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Debug|x64.ActiveCfg = Debug|x64
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Debug|x64.Build.0 = Debug|x64
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Debug|x86.ActiveCfg = Debug|Win32
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Debug|x86.Build.0 = Debug|Win32
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Release|x64.ActiveCfg = Release|x64
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Release|x64.Build.0 = Release|x64
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Release|x86.ActiveCfg = Release|Win32
+		{D9904A62-00CF-4A81-9294-C1E9222EC308}.Release|x86.Build.0 = Release|Win32
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Debug|x64.ActiveCfg = Debug|x64
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Debug|x64.Build.0 = Debug|x64
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Debug|x86.ActiveCfg = Debug|Win32
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Debug|x86.Build.0 = Debug|Win32
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Release|x64.ActiveCfg = Release|x64
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Release|x64.Build.0 = Release|x64
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Release|x86.ActiveCfg = Release|Win32
+		{803D653E-EDEE-464D-9997-BCA0F9CA6F52}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98543D1B-58EB-4418-ABBC-44035BDBB858}
+	EndGlobalSection
+EndGlobal
