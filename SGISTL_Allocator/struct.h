@@ -1,12 +1,12 @@
 #pragma once
-// ÄÚ´æ³ØµÄÁ£¶ÈÐÅÏ¢£¬×î´ó×Ö½Ú°´8×Ö½Ú¶ÔÆë£¬¹²16¸öÊý×éÔªËØ£¬Ã¿¸öÔªËØ¹ÒÒ»¸öÁ´±í
-enum { _ALIGN = 8 }; // ¶ÔÆë
-enum { _MAX_BYTES = 128 }; // ×î´ó×Ö½Ú
-enum { _NFREELISTS = 16 }; // ×ÔÓÉÁ´±í¸öÊý£º_MAX_BYTES/_ALIGN
+// å†…å­˜æ± çš„ç²’åº¦ä¿¡æ¯ï¼Œæœ€å¤§å­—èŠ‚æŒ‰8å­—èŠ‚å¯¹é½ï¼Œå…±16ä¸ªæ•°ç»„å…ƒç´ ï¼Œæ¯ä¸ªå…ƒç´ æŒ‚ä¸€ä¸ªé“¾è¡¨
+enum { _ALIGN = 8 }; // å¯¹é½
+enum { _MAX_BYTES = 128 }; // æœ€å¤§å­—èŠ‚
+enum { _NFREELISTS = 16 }; // è‡ªç”±é“¾è¡¨ä¸ªæ•°ï¼š_MAX_BYTES/_ALIGN
 
-// ½« __byte ÉÏµ÷ÖÁ×îÁÙ½üµÄ 8 µÄ±¶Êý
-// (size_t)Ç¿×ªÎª4×Ö½ÚÎÞ·ûºÅÕûÊý£¬Í¨¹ý¶ÔÓÒ±ßÈ¡·´ÔÙÏàÓë
-// 1-8 =¡· 8, 9-16 =¡·16, ...
+// å°† __byte ä¸Šè°ƒè‡³æœ€ä¸´è¿‘çš„ 8 çš„å€æ•°
+// (size_t)å¼ºè½¬ä¸º4å­—èŠ‚æ— ç¬¦å·æ•´æ•°ï¼Œé€šè¿‡å¯¹å³è¾¹å–åå†ç›¸ä¸Ž
+// 1-8 =ã€‹ 8, 9-16 =ã€‹16, ...
 static size_t
 _S_round_up(size_t __bytes)
 {

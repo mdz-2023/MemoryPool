@@ -1,12 +1,13 @@
 #pragma once
 /*
-* ÒÆÖ²SGISTL¶ş¼¶¿Õ¼äÅäÖÃÆ÷Ô´Âë  Í¨¹ıÄ£°åÊµÏÖ
-* ¿Õ¼äÅäÖÃÆ÷ÊÇÈİÆ÷Ê¹ÓÃµÄ£¬ÈİÆ÷¶ÔÏóµÄ²úÉúºÜÓĞ¿ÉÄÜÔÚ¶à¸öÏß³Ì²Ù×÷
-* ËùÒÔ²»Í¬ÓÚnginx£¬±¾´ÎÒªÓÃ¶àÏß³ÌºÍÄ£°å
+* ç§»æ¤SGISTLäºŒçº§ç©ºé—´é…ç½®å™¨æºç   é€šè¿‡æ¨¡æ¿å®ç°
+* ç©ºé—´é…ç½®å™¨æ˜¯å®¹å™¨ä½¿ç”¨çš„ï¼Œå®¹å™¨å¯¹è±¡çš„äº§ç”Ÿå¾ˆæœ‰å¯èƒ½åœ¨å¤šä¸ªçº¿ç¨‹æ“ä½œ
+* æ‰€ä»¥ä¸åŒäºnginxï¼Œæœ¬æ¬¡è¦ç”¨å¤šçº¿ç¨‹å’Œæ¨¡æ¿
 */
 #include <mutex>
+#include <string.h>
 
-// ·â×°ÁËmallocºÍfree£¬¿ÉÒÔÉèÖÃoomÊÍ·ÅÄÚ´æµÄ»Øµ÷º¯Êı
+// å°è£…äº†mallocå’Œfreeï¼Œå¯ä»¥è®¾ç½®oomé‡Šæ”¾å†…å­˜çš„å›è°ƒå‡½æ•°
 template <int __inst>
 class __malloc_alloc_template {
 
@@ -15,7 +16,7 @@ private:
     static void* _S_oom_malloc(size_t);
     static void* _S_oom_realloc(void*, size_t);
     
-    static void (*__malloc_alloc_oom_handler)(); // »Øµ÷º¯Êı
+    static void (*__malloc_alloc_oom_handler)(); // å›è°ƒå‡½æ•°
 
 public:
 
@@ -47,7 +48,7 @@ public:
 
 };
 template <int __inst>
-void (*__malloc_alloc_template<__inst>::__malloc_alloc_oom_handler)() = nullptr; // º¯ÊıÖ¸ÕëÀàĞÍ
+void (*__malloc_alloc_template<__inst>::__malloc_alloc_oom_handler)() = nullptr; // å‡½æ•°æŒ‡é’ˆç±»å‹
 
 
 template <int __inst>
@@ -58,11 +59,11 @@ __malloc_alloc_template<__inst>::_S_oom_malloc(size_t __n) // out of mamery
     void* __result;
 
     for (;;) {
-        __my_malloc_handler = __malloc_alloc_oom_handler; // »Øµ÷º¯Êı
-        if (0 == __my_malloc_handler) { throw std::bad_alloc(); } // Ã»ÓĞÓÃ»§»Øµ÷º¯Êı
-        (*__my_malloc_handler)(); // ÓĞÓÃ»§»Øµ÷º¯Êı
+        __my_malloc_handler = __malloc_alloc_oom_handler; // å›è°ƒå‡½æ•°
+        if (0 == __my_malloc_handler) { throw std::bad_alloc(); } // æ²¡æœ‰ç”¨æˆ·å›è°ƒå‡½æ•°
+        (*__my_malloc_handler)(); // æœ‰ç”¨æˆ·å›è°ƒå‡½æ•°
         __result = malloc(__n);
-        if (__result) return(__result); // ËÀÑ­»·£¬Ö±µ½µ÷ÓÃ³É¹¦£¬ÄÚ´æ·ÖÅä³É¹¦
+        if (__result) return(__result); // æ­»å¾ªç¯ï¼Œç›´åˆ°è°ƒç”¨æˆåŠŸï¼Œå†…å­˜åˆ†é…æˆåŠŸ
     }
 }
 
@@ -83,33 +84,33 @@ void* __malloc_alloc_template<__inst>::_S_oom_realloc(void* __p, size_t __n)
 
 typedef __malloc_alloc_template<0> malloc_alloc;
 
-// ÄÚ´æ³ØµÄÁ£¶ÈĞÅÏ¢£¬×î´ó×Ö½Ú°´8×Ö½Ú¶ÔÆë£¬¹²16¸öÊı×éÔªËØ£¬Ã¿¸öÔªËØ¹ÒÒ»¸öÁ´±í
-enum { _ALIGN = 8 }; // ¶ÔÆë
-enum { _MAX_BYTES = 128 }; // ×î´ó×Ö½Ú
-enum { _NFREELISTS = 16 }; // ×ÔÓÉÁ´±í¸öÊı£º_MAX_BYTES/_ALIGN
+// å†…å­˜æ± çš„ç²’åº¦ä¿¡æ¯ï¼Œæœ€å¤§å­—èŠ‚æŒ‰8å­—èŠ‚å¯¹é½ï¼Œå…±16ä¸ªæ•°ç»„å…ƒç´ ï¼Œæ¯ä¸ªå…ƒç´ æŒ‚ä¸€ä¸ªé“¾è¡¨
+enum { _ALIGN = 8 }; // å¯¹é½
+enum { _MAX_BYTES = 128 }; // æœ€å¤§å­—èŠ‚
+enum { _NFREELISTS = 16 }; // è‡ªç”±é“¾è¡¨ä¸ªæ•°ï¼š_MAX_BYTES/_ALIGN
 
 
-// ¾²Ì¬±íÊ¾ËùÓĞ±äÁ¿¶¼ÓÃÍ¬Ò»¸öÄÚ´æ³Ø
-// ¶ÔÓÚÄ£°åÀà£¬ĞèÒª½«ÊµÏÖ£¨¼´¶¨Òå£©·ÅÔÚÍ·ÎÄ¼şÖĞ
+// é™æ€è¡¨ç¤ºæ‰€æœ‰å˜é‡éƒ½ç”¨åŒä¸€ä¸ªå†…å­˜æ± 
+// å¯¹äºæ¨¡æ¿ç±»ï¼Œéœ€è¦å°†å®ç°ï¼ˆå³å®šä¹‰ï¼‰æ”¾åœ¨å¤´æ–‡ä»¶ä¸­
 template <typename T>
 class MyAllocator
 {
 public:
     using value_type = T;
 
-    // ÕıÊ½µÄallocatorÖĞÓĞµÄ¹¹Ôìº¯Êı£¬ÕâÀïÒ²Òª¼Ó½øÈ¥£¬²»È»±¨´í
+    // æ­£å¼çš„allocatorä¸­æœ‰çš„æ„é€ å‡½æ•°ï¼Œè¿™é‡Œä¹Ÿè¦åŠ è¿›å»ï¼Œä¸ç„¶æŠ¥é”™
     /*
-    * 1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(701,27): message : ÎŞ¹¹Ôìº¯Êı¿ÉÒÔ½ÓÊÜÔ´ÀàĞÍ£¬»ò¹¹Ôìº¯ÊıÖØÔØ¾ö²ß²»Ã÷È·
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(698): message : ÔÚ±àÒë Àà Ä£°å ³ÉÔ±º¯Êı¡°std::vector<int,MyAllocator<int>>::~vector(void) noexcept¡±Ê±
-1>C:\Users\15092\source\repos\Nginx\SGISTL_Allocator\testMyAllocator.cpp(7): message : ²é¿´¶ÔÕıÔÚ±àÒëµÄº¯Êı Ä£°å ÊµÀı»¯¡°std::vector<int,MyAllocator<int>>::~vector(void) noexcept¡±µÄÒıÓÃ
-1>C:\Users\15092\source\repos\Nginx\SGISTL_Allocator\testMyAllocator.cpp(7): message : ²é¿´¶ÔÕıÔÚ±àÒëµÄ Àà Ä£°å ÊµÀı»¯¡°std::vector<int,MyAllocator<int>>¡±µÄÒıÓÃ
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(701,25): error C2530: ¡°_Alproxy¡±: ±ØĞë³õÊ¼»¯ÒıÓÃ
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): error C3536: ¡°_Alproxy¡±: ³õÊ¼»¯Ö®Ç°ÎŞ·¨Ê¹ÓÃ
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,9): error C2672: ¡°_Delete_plain_internal¡±: Î´ÕÒµ½Æ¥ÅäµÄÖØÔØº¯Êı
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): error C2893: Î´ÄÜÊ¹º¯ÊıÄ£°å¡°void std::_Delete_plain_internal(_Alloc &,_Alloc::value_type *const ) noexcept¡±×¨ÓÃ»¯
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(945): message : ²Î¼û¡°std::_Delete_plain_internal¡±µÄÉùÃ÷
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): message : ÓÃÏÂÁĞÄ£°å²ÎÊı:
-1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): message : ¡°_Alloc=int¡±
+    * 1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(701,27): message : æ— æ„é€ å‡½æ•°å¯ä»¥æ¥å—æºç±»å‹ï¼Œæˆ–æ„é€ å‡½æ•°é‡è½½å†³ç­–ä¸æ˜ç¡®
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(698): message : åœ¨ç¼–è¯‘ ç±» æ¨¡æ¿ æˆå‘˜å‡½æ•°â€œstd::vector<int,MyAllocator<int>>::~vector(void) noexceptâ€æ—¶
+1>C:\Users\15092\source\repos\Nginx\SGISTL_Allocator\testMyAllocator.cpp(7): message : æŸ¥çœ‹å¯¹æ­£åœ¨ç¼–è¯‘çš„å‡½æ•° æ¨¡æ¿ å®ä¾‹åŒ–â€œstd::vector<int,MyAllocator<int>>::~vector(void) noexceptâ€çš„å¼•ç”¨
+1>C:\Users\15092\source\repos\Nginx\SGISTL_Allocator\testMyAllocator.cpp(7): message : æŸ¥çœ‹å¯¹æ­£åœ¨ç¼–è¯‘çš„ ç±» æ¨¡æ¿ å®ä¾‹åŒ–â€œstd::vector<int,MyAllocator<int>>â€çš„å¼•ç”¨
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(701,25): error C2530: â€œ_Alproxyâ€: å¿…é¡»åˆå§‹åŒ–å¼•ç”¨
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): error C3536: â€œ_Alproxyâ€: åˆå§‹åŒ–ä¹‹å‰æ— æ³•ä½¿ç”¨
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,9): error C2672: â€œ_Delete_plain_internalâ€: æœªæ‰¾åˆ°åŒ¹é…çš„é‡è½½å‡½æ•°
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): error C2893: æœªèƒ½ä½¿å‡½æ•°æ¨¡æ¿â€œvoid std::_Delete_plain_internal(_Alloc &,_Alloc::value_type *const ) noexceptâ€ä¸“ç”¨åŒ–
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(945): message : å‚è§â€œstd::_Delete_plain_internalâ€çš„å£°æ˜
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): message : ç”¨ä¸‹åˆ—æ¨¡æ¿å‚æ•°:
+1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\vector(702,1): message : â€œ_Alloc=intâ€
     */
     constexpr MyAllocator() noexcept {}
 
@@ -118,44 +119,44 @@ public:
     constexpr MyAllocator(const MyAllocator<_Other>&) noexcept {}
 
 
-    // ¸ºÔğÄÚ´æ¿ª±ÙµÄº¯Êı
+    // è´Ÿè´£å†…å­˜å¼€è¾Ÿçš„å‡½æ•°
     T* allocate(size_t __n) {
-        __n *= sizeof(T); // ÈİÆ÷µ÷ÓÃµÄÊ±ºò__n´«µÄÊÇÔªËØ¸öÊı
+        __n *= sizeof(T); // å®¹å™¨è°ƒç”¨çš„æ—¶å€™__nä¼ çš„æ˜¯å…ƒç´ ä¸ªæ•°
         void* __ret = 0;
 
-        if (__n > (size_t)_MAX_BYTES) { // ´óÓÚ128×Ö½Ú¾Í²»ÓÃÄÚ´æ³Ø Í¨¹ıÒ»¼¶ÅäÖÃÆ÷Ò»Ñù
+        if (__n > (size_t)_MAX_BYTES) { // å¤§äº128å­—èŠ‚å°±ä¸ç”¨å†…å­˜æ±  é€šè¿‡ä¸€çº§é…ç½®å™¨ä¸€æ ·
             __ret = malloc_alloc::allocate(__n);
         }
-        else { // Ğ¡ÓÚ128×Ö½Ú£¬Ê¹ÓÃ¶ş¼¶ÅäÖÃÆ÷
-            _Obj* volatile* __my_free_list  // ¶ş¼¶Ö¸Õë, Ö¸ÏòÒª·ÖÅäµÄ´óĞ¡ºÏÊÊ£¨nÏòÉÏÈ¡8£©µÄÁ´±í
+        else { // å°äº128å­—èŠ‚ï¼Œä½¿ç”¨äºŒçº§é…ç½®å™¨
+            _Obj* volatile* __my_free_list  // äºŒçº§æŒ‡é’ˆ, æŒ‡å‘è¦åˆ†é…çš„å¤§å°åˆé€‚ï¼ˆnå‘ä¸Šå–8ï¼‰çš„é“¾è¡¨
                 = _S_free_list + _S_freelist_index(__n);
 
             std::lock_guard<std::mutex> guard(mtx);
-            _Obj* __result = *__my_free_list; // resultÖ¸ÏòÁ´±í
-            if (__result == 0) // Á´±íÎª¿Õ
-                __ret = _S_refill(_S_round_up(__n)); // ·ÖÅä¿é´óĞ¡Îª nÏòÉÏÈ¡8 µÄÒ»¸öÁ´±í
+            _Obj* __result = *__my_free_list; // resultæŒ‡å‘é“¾è¡¨
+            if (__result == 0) // é“¾è¡¨ä¸ºç©º
+                __ret = _S_refill(_S_round_up(__n)); // åˆ†é…å—å¤§å°ä¸º nå‘ä¸Šå–8 çš„ä¸€ä¸ªé“¾è¡¨
             else {
-                *__my_free_list = __result->_M_free_list_link; // Êı×éÖĞµÄÍ·½áµãÖ¸ÏòÁ´±íµÄµÚ¶ş¸ö½Úµã
-                __ret = __result; // Á´±íµÄÔ­µÚÒ»¸ö½Úµã·ÖÅä³öÈ¥
+                *__my_free_list = __result->_M_free_list_link; // æ•°ç»„ä¸­çš„å¤´ç»“ç‚¹æŒ‡å‘é“¾è¡¨çš„ç¬¬äºŒä¸ªèŠ‚ç‚¹
+                __ret = __result; // é“¾è¡¨çš„åŸç¬¬ä¸€ä¸ªèŠ‚ç‚¹åˆ†é…å‡ºå»
             }
-            // ³ö×÷ÓÃÓò£¬lock_guard×Ô¶¯½âËø
+            // å‡ºä½œç”¨åŸŸï¼Œlock_guardè‡ªåŠ¨è§£é”
         }
 
         return (T*)__ret;
     }
 
-    // __pÖ¸ÏòÒª»ØÊÕµÄÄÚ´æÆğÊ¼µØÖ·£¬__n±íÊ¾Æä´óĞ¡
+    // __pæŒ‡å‘è¦å›æ”¶çš„å†…å­˜èµ·å§‹åœ°å€ï¼Œ__nè¡¨ç¤ºå…¶å¤§å°
     static void deallocate(void* __p, size_t __n) {
-        if (__n > (size_t)_MAX_BYTES)// ´óÓÚ128×Ö½Ú£¬ÆÕÍ¨·½Ê½¿ª±ÙºÍ»ØÊÕÄÚ´æ
+        if (__n > (size_t)_MAX_BYTES)// å¤§äº128å­—èŠ‚ï¼Œæ™®é€šæ–¹å¼å¼€è¾Ÿå’Œå›æ”¶å†…å­˜
             malloc_alloc::deallocate(__p, __n);
         else {
             _Obj* volatile* __my_free_list
-                = _S_free_list + _S_freelist_index(__n); // ÕÒµ½Êı×éÖĞ¶ÔÓ¦µÄÍ·½áµã
+                = _S_free_list + _S_freelist_index(__n); // æ‰¾åˆ°æ•°ç»„ä¸­å¯¹åº”çš„å¤´ç»“ç‚¹
             _Obj* __q = (_Obj*)__p;
 
             std::lock_guard<std::mutex> guard(mtx);
-            __q->_M_free_list_link = *__my_free_list; // Òª¹é»¹µÄ½ÚµãµÄÖ¸Õë£¬Ö¸ÏòÔ­Á´±íÊ×½Úµã
-            *__my_free_list = __q; // Êı×éÖĞµÄÍ·Ö¸ÕëÖ¸ÏòÒª¹é»¹µÄ½Úµã£¬Íê³ÉÏòÁ´±íÇ°²¿Ìí¼Ó»ØÊÕ½Úµã
+            __q->_M_free_list_link = *__my_free_list; // è¦å½’è¿˜çš„èŠ‚ç‚¹çš„æŒ‡é’ˆï¼ŒæŒ‡å‘åŸé“¾è¡¨é¦–èŠ‚ç‚¹
+            *__my_free_list = __q; // æ•°ç»„ä¸­çš„å¤´æŒ‡é’ˆæŒ‡å‘è¦å½’è¿˜çš„èŠ‚ç‚¹ï¼Œå®Œæˆå‘é“¾è¡¨å‰éƒ¨æ·»åŠ å›æ”¶èŠ‚ç‚¹
             // lock guard is released here
         };
     }
@@ -164,104 +165,104 @@ public:
         void* __result;
         size_t __copy_sz;
 
-        if (__old_sz > (size_t)_MAX_BYTES && __new_sz > (size_t)_MAX_BYTES) { // Ã»ÓÃÄÚ´æ³Ø
+        if (__old_sz > (size_t)_MAX_BYTES && __new_sz > (size_t)_MAX_BYTES) { // æ²¡ç”¨å†…å­˜æ± 
             return(realloc(__p, __new_sz));
         }
-        if (_S_round_up(__old_sz) == _S_round_up(__new_sz)) return(__p); // ¼¸ºõÍ¬Ñù´óĞ¡£¬ÎŞĞèÖØĞÂ·ÖÅä
-        __result = allocate(__new_sz); // ´ÓÄÚ´æ³ØÖĞ»ñÈ¡µ½ĞÂ¿Õ¼ä
+        if (_S_round_up(__old_sz) == _S_round_up(__new_sz)) return(__p); // å‡ ä¹åŒæ ·å¤§å°ï¼Œæ— éœ€é‡æ–°åˆ†é…
+        __result = allocate(__new_sz); // ä»å†…å­˜æ± ä¸­è·å–åˆ°æ–°ç©ºé—´
         __copy_sz = __new_sz > __old_sz ? __old_sz : __new_sz;
-        memcpy(__result, __p, __copy_sz); // ´Ó¾ÉÄÚ´æ¿½±´Êı¾İµ½ĞÂÄÚ´æ£¬Êı¾İ³¤¶ÈÊÇÁ½ÄÚ´æµÄ½ÏĞ¡³¤¶È
-        deallocate(__p, __old_sz); // ÊÍ·Å¾ÉÄÚ´æ
+        memcpy(__result, __p, __copy_sz); // ä»æ—§å†…å­˜æ‹·è´æ•°æ®åˆ°æ–°å†…å­˜ï¼Œæ•°æ®é•¿åº¦æ˜¯ä¸¤å†…å­˜çš„è¾ƒå°é•¿åº¦
+        deallocate(__p, __old_sz); // é‡Šæ”¾æ—§å†…å­˜
         return(__result);
     }
 
-    // ½« __byte ÉÏµ÷ÖÁ×îÁÙ½üµÄ _ALIGN µÄ±¶Êı
+    // å°† __byte ä¸Šè°ƒè‡³æœ€ä¸´è¿‘çš„ _ALIGN çš„å€æ•°
     static size_t _S_round_up(size_t __bytes)
     {
         return (((__bytes)+(size_t)_ALIGN - 1) & ~((size_t)_ALIGN - 1));
     }
 
-    // ¶ÔÏó¹¹Ôì
+    // å¯¹è±¡æ„é€ 
     void construct(T* __p, const T& val) {
         new (__p) T(val);
     }
 
-    // ¶ÔÏóÎö¹¹
+    // å¯¹è±¡ææ„
     void destroy(T* __p) {
         __p->~T();
     }
 
 private:
-    // Ã¿Ò»¸öÄÚ´æchunk¿éµÄÍ·ĞÅÏ¢
+    // æ¯ä¸€ä¸ªå†…å­˜chunkå—çš„å¤´ä¿¡æ¯
     union _Obj {
-        union _Obj* _M_free_list_link; // ¾²Ì¬Á´±íµÄÖ¸ÕëÓò
+        union _Obj* _M_free_list_link; // é™æ€é“¾è¡¨çš„æŒ‡é’ˆåŸŸ
         char _M_client_data[1];    /* The client sees this.        */
     };
-    // ¾²Ì¬Êı×é£¬×éÖ¯ËùÓĞµÄ¾²Ì¬Á´±í¡£Ã¿¸öÊı×éÔªËØÊÇ_obj*
-    // volatile ·ÀÖ¹¶àÏß³Ì¶ÔÊı×é½øĞĞ»º´æ£¬µ¼ÖÂ¶Á²»µ½×îĞÂÊı×é
+    // é™æ€æ•°ç»„ï¼Œç»„ç»‡æ‰€æœ‰çš„é™æ€é“¾è¡¨ã€‚æ¯ä¸ªæ•°ç»„å…ƒç´ æ˜¯_obj*
+    // volatile é˜²æ­¢å¤šçº¿ç¨‹å¯¹æ•°ç»„è¿›è¡Œç¼“å­˜ï¼Œå¯¼è‡´è¯»ä¸åˆ°æœ€æ–°æ•°ç»„
     static _Obj* volatile _S_free_list[_NFREELISTS];
 
-    // ÄÚ´æ³Ø»ùÓÚfreelistÊµÏÖ£¬ĞèÒª¿¼ÂÇÏß³Ì°²È«
+    // å†…å­˜æ± åŸºäºfreelistå®ç°ï¼Œéœ€è¦è€ƒè™‘çº¿ç¨‹å®‰å…¨
     static std::mutex mtx;
 
-    // ·µ»Ø _bytes ´óĞ¡µÄchunk¿é Î»ÓÚ free-list ÖĞµÄ±àºÅ
+    // è¿”å› _bytes å¤§å°çš„chunkå— ä½äº free-list ä¸­çš„ç¼–å·
     static size_t _S_freelist_index(size_t __bytes) {
         return (((__bytes)+(size_t)_ALIGN - 1) / (size_t)_ALIGN - 1);
     }
      
-    // °Ñ·ÖÅäµÄchunk¿é½øĞĞÁ¬½Ó
+    // æŠŠåˆ†é…çš„chunkå—è¿›è¡Œè¿æ¥
     static void* _S_refill(size_t __n) {
         int __nobjs = 20;
-        char* __chunk = _S_chunk_alloc(__n, __nobjs); // ¸ºÔğ·ÖÅäÏàÓ¦´óĞ¡µÄchunk¿éÄÚ´æ³Ø£¬ÓÉ_chunkÖ¸Õë½ÓÊÕ
-        _Obj* volatile* __my_free_list; // Ö¸ÏòÊı×éÏÂ¹ÒµÄÁ´±í
+        char* __chunk = _S_chunk_alloc(__n, __nobjs); // è´Ÿè´£åˆ†é…ç›¸åº”å¤§å°çš„chunkå—å†…å­˜æ± ï¼Œç”±_chunkæŒ‡é’ˆæ¥æ”¶
+        _Obj* volatile* __my_free_list; // æŒ‡å‘æ•°ç»„ä¸‹æŒ‚çš„é“¾è¡¨
         _Obj* __result;
         _Obj* __current_obj;
         _Obj* __next_obj;
         int __i;
 
-        if (1 == __nobjs) return(__chunk); // _S_chunk_alloc()ÒıÓÃ½ÓÊÜnobjs£¬Èç¹ûÖ»Éú³ÉÒ»¸öchunk£¬Ö±½Ó·µ»Ø
-        __my_free_list = _S_free_list + _S_freelist_index(__n); // Ó³ÉäÊı×éÏÂ±ê£¬È¡µÃÁ´±íÍ·Ö¸Õë
+        if (1 == __nobjs) return(__chunk); // _S_chunk_alloc()å¼•ç”¨æ¥å—nobjsï¼Œå¦‚æœåªç”Ÿæˆä¸€ä¸ªchunkï¼Œç›´æ¥è¿”å›
+        __my_free_list = _S_free_list + _S_freelist_index(__n); // æ˜ å°„æ•°ç»„ä¸‹æ ‡ï¼Œå–å¾—é“¾è¡¨å¤´æŒ‡é’ˆ
 
         /* Build free list in chunk */
-        __result = (_Obj*)__chunk; // ¼ÇÂ¼µÚÒ»¸ö¿é£¬ÂíÉÏ·ÖÅä³öÈ¥
-        // ×Ö½ÚÖ¸Õë+Êı×Ö£¬Íùºó×ßn¸ö×Ö½Ú¡£¼´Êı×éÖĞÁ´±íÍ·Ö¸ÕëÖ¸ÏòµÄÏÂÒ»¸ö¿é£¨¿ÕÏĞ£©
+        __result = (_Obj*)__chunk; // è®°å½•ç¬¬ä¸€ä¸ªå—ï¼Œé©¬ä¸Šåˆ†é…å‡ºå»
+        // å­—èŠ‚æŒ‡é’ˆ+æ•°å­—ï¼Œå¾€åèµ°nä¸ªå­—èŠ‚ã€‚å³æ•°ç»„ä¸­é“¾è¡¨å¤´æŒ‡é’ˆæŒ‡å‘çš„ä¸‹ä¸€ä¸ªå—ï¼ˆç©ºé—²ï¼‰
         *__my_free_list = __next_obj = (_Obj*)(__chunk + __n);
         for (__i = 1; ; __i++) {
             __current_obj = __next_obj;
-            __next_obj = (_Obj*)((char*)__next_obj + __n); // nextÖ¸ÕëÆ«ÒÆÕû¸ö¿éµÄ×Ö½Ún£¬¼´Ö¸ÏòÏÂÒ»¸ö¿é  
-            if (__nobjs - 1 == __i) { // µ½Á´±íÄ©Î²ÁË
+            __next_obj = (_Obj*)((char*)__next_obj + __n); // nextæŒ‡é’ˆåç§»æ•´ä¸ªå—çš„å­—èŠ‚nï¼Œå³æŒ‡å‘ä¸‹ä¸€ä¸ªå—  
+            if (__nobjs - 1 == __i) { // åˆ°é“¾è¡¨æœ«å°¾äº†
                 __current_obj->_M_free_list_link = 0;
                 break;
             }
-            else {// ½«Á¬ĞøµÄ×Ö½Ú¿éÕæÕıĞÎ³ÉÁ´±í£¬Ö¸Õë´æµ½Ã¿¸ö¿é½ÚµãµÄÖ¸ÕëÓòÀï
+            else {// å°†è¿ç»­çš„å­—èŠ‚å—çœŸæ­£å½¢æˆé“¾è¡¨ï¼ŒæŒ‡é’ˆå­˜åˆ°æ¯ä¸ªå—èŠ‚ç‚¹çš„æŒ‡é’ˆåŸŸé‡Œ
                 __current_obj->_M_free_list_link = __next_obj;
             }
         }
         return(__result);
     }
 
-    // Ö÷Òª¸ºÔğ·ÖÅächunk¿é
+    // ä¸»è¦è´Ÿè´£åˆ†é…chunkå—
     static char* _S_chunk_alloc(size_t __size, int& __nobjs) {
         char* __result;
         size_t __total_bytes = __size * __nobjs;
-        size_t __bytes_left = _S_end_free - _S_start_free; // Ê£Óà×Ö½ÚÊı£¬¿ÉÒÔ·ÖÅä¸ø²»Í¬´óĞ¡µÄchunk¿é
+        size_t __bytes_left = _S_end_free - _S_start_free; // å‰©ä½™å­—èŠ‚æ•°ï¼Œå¯ä»¥åˆ†é…ç»™ä¸åŒå¤§å°çš„chunkå—
 
-        if (__bytes_left >= __total_bytes) { // Ê£ÓàÒÑÉêÇëµÄ¿Õ¼äÖĞ×ã¹»·ÖÅä20¸ö´óĞ¡ÎªsizeµÄchunk¿é
+        if (__bytes_left >= __total_bytes) { // å‰©ä½™å·²ç”³è¯·çš„ç©ºé—´ä¸­è¶³å¤Ÿåˆ†é…20ä¸ªå¤§å°ä¸ºsizeçš„chunkå—
             __result = _S_start_free;
             _S_start_free += __total_bytes;
             return(__result);
         }
-        else if (__bytes_left >= __size) { // ²»¹»µÄ»°£¬¼ÆËã¹»·ÖÅä¼¸¸öµÄ£¬¸ü¸Ä·ÖÅä¸öÊı
+        else if (__bytes_left >= __size) { // ä¸å¤Ÿçš„è¯ï¼Œè®¡ç®—å¤Ÿåˆ†é…å‡ ä¸ªçš„ï¼Œæ›´æ”¹åˆ†é…ä¸ªæ•°
             __nobjs = (int)(__bytes_left / __size);
             __total_bytes = __size * __nobjs;
             __result = _S_start_free;
             _S_start_free += __total_bytes;
             return(__result);
         }
-        else { // ÊµÔÚ²»¹»ÓÃ£¬ÏÈ´¦ÀíÍêÊ£ÓàĞ¡ÄÚ´æ£¬ÔÙ·ÖÅäĞÂ¿Õ¼ä
+        else { // å®åœ¨ä¸å¤Ÿç”¨ï¼Œå…ˆå¤„ç†å®Œå‰©ä½™å°å†…å­˜ï¼Œå†åˆ†é…æ–°ç©ºé—´
             size_t __bytes_to_get =
-                2 * __total_bytes + _S_round_up(_S_heap_size >> 4); // _S_heap_size³ıÒÔ16 ÔÙÏòÉÏÈ¡8µÄ±¶Êı
-            // ´Ë´¦Ê£ÓàÁ¿²»¹»±¾´ÎµÄÒ»¸öchunk¿é£¬¾Í½«Ê£ÓàµÄ×Ö½Ú×÷ÎªÒ»¸öchunk¿é·Å¸øºÏÊÊËûµÄÁ´±íÍ·²¿£¬¼´³ä·ÖÀûÓÃÃ¿Ò»¿éĞ¡ÄÚ´æ
+                2 * __total_bytes + _S_round_up(_S_heap_size >> 4); // _S_heap_sizeé™¤ä»¥16 å†å‘ä¸Šå–8çš„å€æ•°
+            // æ­¤å¤„å‰©ä½™é‡ä¸å¤Ÿæœ¬æ¬¡çš„ä¸€ä¸ªchunkå—ï¼Œå°±å°†å‰©ä½™çš„å­—èŠ‚ä½œä¸ºä¸€ä¸ªchunkå—æ”¾ç»™åˆé€‚ä»–çš„é“¾è¡¨å¤´éƒ¨ï¼Œå³å……åˆ†åˆ©ç”¨æ¯ä¸€å—å°å†…å­˜
             if (__bytes_left > 0) {
                 _Obj* volatile* __my_free_list =
                     _S_free_list + _S_freelist_index(__bytes_left);
@@ -274,11 +275,11 @@ private:
                 size_t __i;
                 _Obj* volatile* __my_free_list;
                 _Obj* __p;
-                // ÏµÍ³¿Õ¼ä²»¹»£¬Ôò²é¿´ÓÒ²à¸ü´óchunkÁ´±íÖĞÓĞÎŞ¿ÕÏĞchunk
-                // forÑ­»·´Óµ±Ç°·ÖÅä²»ÁËµÄ¿é´óĞ¡£¨¼ÙÉèÎª40£©ÍùÓÒ±éÀúÊı×é
-                // _p¶ÔÓÒ±ßµÚÒ»¸öÓĞ¿ÕÏĞ¿éµÄÁ´±í£¨¼ÙÉèÎª48£©½øĞĞ±éÀú
-                // È»ºóÈ¡ÆäÍ·²¿¿é£¬´óĞ¡Îª48£¬×÷Îª40µÄstartºÍend£¬Ô­48µÄÁ´±íÉ¾³ı´Ë½Úµã
-                // ÓĞstartºÍend¼´ÎªÓĞ¿ÕÏĞ×Ö½Ú£¬¿ÉÒÔ¼ÌĞøµİ¹éµ÷ÓÃ±¾º¯Êı
+                // ç³»ç»Ÿç©ºé—´ä¸å¤Ÿï¼Œåˆ™æŸ¥çœ‹å³ä¾§æ›´å¤§chunké“¾è¡¨ä¸­æœ‰æ— ç©ºé—²chunk
+                // forå¾ªç¯ä»å½“å‰åˆ†é…ä¸äº†çš„å—å¤§å°ï¼ˆå‡è®¾ä¸º40ï¼‰å¾€å³éå†æ•°ç»„
+                // _på¯¹å³è¾¹ç¬¬ä¸€ä¸ªæœ‰ç©ºé—²å—çš„é“¾è¡¨ï¼ˆå‡è®¾ä¸º48ï¼‰è¿›è¡Œéå†
+                // ç„¶åå–å…¶å¤´éƒ¨å—ï¼Œå¤§å°ä¸º48ï¼Œä½œä¸º40çš„startå’Œendï¼ŒåŸ48çš„é“¾è¡¨åˆ é™¤æ­¤èŠ‚ç‚¹
+                // æœ‰startå’Œendå³ä¸ºæœ‰ç©ºé—²å­—èŠ‚ï¼Œå¯ä»¥ç»§ç»­é€’å½’è°ƒç”¨æœ¬å‡½æ•°
                 for (__i = __size;
                     __i <= (size_t)_MAX_BYTES;
                     __i += (size_t)_ALIGN) {
@@ -294,7 +295,7 @@ private:
                     }
                 }
                 _S_end_free = 0;	// In case of exception.
-                    // ÈôÓÒ²à´óchunk¶¼Ã»ÓĞ¿ÕÏĞ£º
+                    // è‹¥å³ä¾§å¤§chunkéƒ½æ²¡æœ‰ç©ºé—²ï¼š
                 _S_start_free = (char*)malloc_alloc::allocate(__bytes_to_get);
                 // This should either throw an
                 // exception or remedy the situation.  Thus we assume it
@@ -302,12 +303,12 @@ private:
             }
             _S_heap_size += __bytes_to_get;
             _S_end_free = _S_start_free + __bytes_to_get;
-            return(_S_chunk_alloc(__size, __nobjs)); // µÚÒ»´Î¹¹ÔìÄÚ´æ³ØÊ±/ÎŞ¿Õ½ÚµãÊ±µİ¹éµ÷ÓÃÒ»´Î£¬×¼±¸ºÃfreeStart/End
+            return(_S_chunk_alloc(__size, __nobjs)); // ç¬¬ä¸€æ¬¡æ„é€ å†…å­˜æ± æ—¶/æ— ç©ºèŠ‚ç‚¹æ—¶é€’å½’è°ƒç”¨ä¸€æ¬¡ï¼Œå‡†å¤‡å¥½freeStart/End
         }
     }
 
 
-    // Chunk allocation state. ÒÑ·ÖÅäµÄChunkµÄÈı¸ö×´Ì¬
+    // Chunk allocation state. å·²åˆ†é…çš„Chunkçš„ä¸‰ä¸ªçŠ¶æ€
     static char* _S_start_free;
     static char* _S_end_free;
     static size_t _S_heap_size;
@@ -324,7 +325,7 @@ size_t MyAllocator<T>::_S_heap_size = 0;
 
 template <typename T>
 typename MyAllocator<T>::_Obj*
-volatile MyAllocator<T>::_S_free_list[_NFREELISTS] = { nullptr }; // ³õÊ¼»¯ÎªÈ«¿Õ
+volatile MyAllocator<T>::_S_free_list[_NFREELISTS] = { nullptr }; // åˆå§‹åŒ–ä¸ºå…¨ç©º
 
 template <typename T>
 std::mutex MyAllocator<T>::mtx;

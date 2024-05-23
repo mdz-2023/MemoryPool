@@ -1,4 +1,4 @@
-﻿// Nginx.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+// Nginx.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 #include "nginx_memo_pool.h"
 #include <stdio.h>
@@ -24,7 +24,7 @@ void func2(FILE* pf)
     printf("close file!");
     fclose(pf);
 }
-void main()
+int main()
 {
     // 512 - sizeof(ngx_pool_t) - 4095   =>   max
     nginx_memo_pool memPool;
@@ -32,21 +32,21 @@ void main()
     if (memPool.ngx_create_pool(512) == nullptr)
     {
         printf("ngx_create_pool fail...");
-        return;
+        return 0;
     }
 
     void* p1 = memPool.ngx_palloc(128); // 从小块内存池分配的
     if (p1 == NULL)
     {
         printf("ngx_palloc 128 bytes fail...");
-        return;
+        return 0;
     }
 
     stData* p2 = (stData * )memPool.ngx_palloc(512); // 从大块内存池分配的
     if (p2 == NULL)
     {
         printf("ngx_palloc 512 bytes fail...");
-        return;
+        return 0;
     }
     p2->ptr = (char*)malloc(12);
     strcpy(p2->ptr, "hello world");
@@ -63,5 +63,5 @@ void main()
     // 可实现在析构函数中
     memPool.ngx_destroy_pool(); // 1.调用所有的预置的清理函数 2.释放大块内存 3.释放小块内存池所有内存
 
-    return;
+    return 0;
 }
